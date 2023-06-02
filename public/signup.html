@@ -68,13 +68,25 @@
         input[type=submit]:hover {
             background-color: #0000cc;
         }
+
+        .card a {
+            text-align: center;
+            margin-top: 12px;
+            color: #0000ff;
+            text-decoration: none;
+            font-family: 'Lobster', cursive;
+        }
+
+        .card a:hover {
+            color: #0000cc;
+        }
     </style>
 </head>
 
 <body>
     <div class="card">
         <h2>Sign Up</h2>
-        <form id="signup-form">
+        <form id="form-id" onsubmit="formSubmit(event)">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter your name" required>
             <label for="email">Email:</label>
@@ -85,36 +97,36 @@
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
             <input type="submit" value="Submit">
         </form>
+        <div style="text-align: center;">
+            <a href="./login.html">Existing User? Login!</a>
+        </div>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    const form = document.getElementById('signup-form');
-
-    form.addEventListener('submit', async (e) => {
+    async function formSubmit(e) {
         e.preventDefault();
 
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const password = document.getElementById('password').value;
-
         const userData = {
-            name: name,
-            email: email,
-            phone: phone,
-            password: password
+            name: event.target.name.value,
+            email: event.target.email.value,
+            phone: event.target.phone.value,
+            password: event.target.password.value,
         };
-
         try {
-            const response = await axios.post('your-endpoint-url', userData);
-            console.log(response.data);
-            // Perform actions after successful form submission
+            const response = await axios.post('http://localhost:3000/signup', userData);
+            const form = document.getElementById("form-id");
+            form.reset();
+            if (response.status === 200) {
+                window.location.href = "./login.html";
+            } else {
+                throw new Error("failed to Sign Up");
+            }
         } catch (error) {
-            console.error(error);
-            // Handle error scenario
+            console.log(JSON.stringify(error));
+            document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
         }
-    });
+    };
 </script>
 
 </html>
