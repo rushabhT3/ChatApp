@@ -3,12 +3,16 @@ const cors = require("cors");
 const app = express();
 const port = 3000;
 
-const entryRoutes = require("./routes/entry");
+const entryRoutes = require("./routes/users");
 const sequelize = require("./util/database");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500",
+  })
+);
 
 app.use("/", entryRoutes);
 
