@@ -101,26 +101,31 @@
     async function formSubmit(e) {
         e.preventDefault();
 
-        const userData = {
-            email: event.target.email.value,
-            password: event.target.password.value,
-        };
+        const email = event.target.email.value;
+        const password = event.target.password.value;
 
-        try {
-            const response = await axios.post('http://localhost:3000/login', userData);
-            console.log(response.data);
-            const form = document.getElementById("form-id");
-            form.reset();
-            if (response.status === 200) {
-                window.location.href = "https://google.com";
-            } else {
-                throw new Error("failed to login");
+        if (email && password) {
+            const userData = { email, password };
+
+            try {
+                const response = await axios.post('http://localhost:3000/login', userData);
+                console.log(response.data);
+                const form = document.getElementById("form-id");
+                form.reset();
+                if (response.status === 200) {
+                    const token = response.data.token;
+                    localStorage.setItem('token', token);
+                    window.location.href = "./chatapp/chatapp.html";
+                } else {
+                    throw new Error("failed to login");
+                }
+            } catch (error) {
+                console.log(JSON.stringify(error));
+                document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
             }
-        } catch (error) {
-            console.log(JSON.stringify(error));
-            document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
-        }
-    };
+        };
+    }
+
 </script>
 
 

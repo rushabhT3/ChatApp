@@ -1,4 +1,7 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const { User } = require("../models/users");
 
@@ -10,6 +13,7 @@ const signup = async (req, res) => {
       if (existingUser) {
         res.status(409).json({ message: "User already exists, Please Login" });
       } else {
+        // ? making the encrypted password with the saltrounds
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
           name,
@@ -28,14 +32,20 @@ const signup = async (req, res) => {
   }
 };
 
+const generateAccessToken = (payload) => {
+  return jwt.sign(payload, process.env.TOKEN_SECRET);
+};
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (email && password) {
       const user = await User.findOne({ where: { email } });
+      // ? bcrypt decoding: inserted and the encrypted password
       if (user && (await bcrypt.compare(password, user.password))) {
-        // console.log(user);
-        res.json(user);
+        // ? Generate JWT & Send the JWT in the response
+        const token = generateAccessToken({ email: user.email });
+        res.json({ user, token });
       } else {
         res.status(401).json({ message: "Invalid email or password" });
       }
@@ -55,5 +65,6 @@ const random = (req, res) => {
 module.exports = {
   signup,
   login,
+  generateAccessToken,
   random,
 };
