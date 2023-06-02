@@ -1,1 +1,1 @@
-# ChatApp
+# Full fledged chat application
