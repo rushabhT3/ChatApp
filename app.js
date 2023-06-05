@@ -3,18 +3,24 @@ const cors = require("cors");
 const app = express();
 const port = 3000;
 
-const entryRoutes = require("./routes/users");
+const entryRoutes = require("./routes/router");
 const sequelize = require("./util/database");
+
+const Users = require("./models/users");
+const Messages = require("./models/messages");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://127.0.0.1:5500",
+    origin: "*",
   })
 );
 
 app.use("/", entryRoutes);
+
+Users.hasMany(Messages);
+Messages.belongsTo(Users);
 
 sequelize
   .sync()

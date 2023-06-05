@@ -12,18 +12,26 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://th.bing.com/th/id/R.f46cf0783f54d8adb40d5e8a94791f28?rik=VNKknAZTFYpaCQ&riu=http%3a%2f%2fwww.color-hex.com%2fpalettes%2f913.png&ehk=bpi5k33MdNNbEtzyMcWYno17SqkABRbvKJkMrnfra9E%3d&risl=&pid=ImgRaw&r=0"
-                alt="ChatG Logo">
+            <img src="logo.png" alt="ChatG Logo">
             <h1>Welcome to ChatG</h1>
         </div>
-        <div id="message-area"></div>
+        <div id="message-area">
+            <div class="left">
+                Left:
+            </div>
+            <div class="right">
+                Right:
+            </div>
+        </div>
         <div class="input-container">
-            <input type="text" id="message-input" placeholder="Type your message...">
-            <button id="send-button">Send</button>
+            <form action="#" method="post" onsubmit="sent(event)">
+                <input type="text" id="message-input" name="input" placeholder="Type your message...">
+                <button id="send-button" type="submit">Send</button>
+            </form>
         </div>
     </div>
-
-    <script src="chatpp.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script src="chatapp.js"></script>
 </body>
 
 </html>
