@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const { User } = require("../models/users");
+const User = require("../models/users");
 
 const signup = async (req, res) => {
   try {
