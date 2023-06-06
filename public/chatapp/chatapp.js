@@ -39,7 +39,10 @@ async function sent(e) {
   console.log(response);
 }
 
-window.addEventListener("load", getMessages);
+// ? "DOMContentLoaded" loaded earlier than load which loads after other css, js loading
+window.addEventListener("load", () => {
+  setInterval(getMessages, 1000);
+});
 async function getMessages() {
   const token = localStorage.getItem("token");
   const decodeToken = parseJwt(token);
