@@ -16,4 +16,10 @@ router.post(
   messageController.sendMessage
 );
 
+router.get(
+  "/getMessages",
+  userauthentication.authenticate,
+  messageController.getMessages
+);
+
 module.exports = router;
