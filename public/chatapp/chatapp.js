@@ -13,7 +13,7 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-function sent(e) {
+async function sent(e) {
   e.preventDefault();
   const messageInput = document.getElementById("message-input");
   const message = messageInput.value;
@@ -27,10 +27,28 @@ function sent(e) {
   const decodeToken = parseJwt(token);
   const jwtEmail = decodeToken.email;
 
-  const response = axios.post("http://localhost:3000/sendMessage", context, {
+  const response = await axios.post(
+    "http://localhost:3000/sendMessage",
+    context,
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+  console.log(response);
+}
+
+window.addEventListener("load", getMessages);
+async function getMessages() {
+  const token = localStorage.getItem("token");
+  const decodeToken = parseJwt(token);
+  const response = await axios.get("http://localhost:3000/getMessages", {
     headers: {
       Authorization: token,
     },
   });
-  console.log(response);
+  const messages = response.data;
+  console.log(messages);
+  // do something with the messages
 }
