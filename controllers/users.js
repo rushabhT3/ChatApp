@@ -9,7 +9,7 @@ const signup = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
     if (name && email && phone && password) {
-      const existingUser = await User.findOne({ email });
+      const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
         res.status(409).json({ message: "User already exists, Please Login" });
       } else {
@@ -32,8 +32,8 @@ const signup = async (req, res) => {
   }
 };
 
-const generateAccessToken = (payload) => {
-  return jwt.sign(payload, process.env.TOKEN_SECRET);
+const generateAccessToken = (id, email) => {
+  return jwt.sign({ jwtId: id, email }, process.env.TOKEN_SECRET);
 };
 
 const login = async (req, res) => {
@@ -44,7 +44,8 @@ const login = async (req, res) => {
       // ? bcrypt decoding: inserted and the encrypted password
       if (user && (await bcrypt.compare(password, user.password))) {
         // ? Generate JWT & Send the JWT in the response
-        const token = generateAccessToken({ email: user.email });
+        const token = generateAccessToken(user.id, user.email);
+        // console.log({ user, token });
         res.json({ user, token });
       } else {
         res.status(401).json({ message: "Invalid email or password" });

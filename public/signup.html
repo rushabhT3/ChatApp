@@ -124,7 +124,8 @@
                 } else {
                     throw new Error("failed to Sign Up");
                 }
-            } catch (error) {
+            }
+            catch (error) {
                 console.log(JSON.stringify(error));
                 if (error.response && error.response.status === 409) {
                     alert("User already exists, Please Login");
@@ -133,7 +134,8 @@
                     document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
                 }
             }
-        } else {
+        }
+        else {
             document.body.innerHTML += `<div style="color:red">Please fill in all the form fields</div>`;
         }
     }

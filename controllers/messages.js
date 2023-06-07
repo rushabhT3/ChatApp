@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 // ? M in the end of variables is for model
 const MessageM = require("../models/messages");
 const UserM = require("../models/users");
@@ -26,8 +28,15 @@ const sendMessage = async (req, res) => {
 
 const getMessages = async (req, res) => {
   try {
-    const messages = await MessageM.findAll();
-    // console.log(messages);
+    const id = req.query.id || 0;
+    const messages = await MessageM.findAll({
+      where: {
+        id: {
+          // ? to use the sequelize function '>' than the given id
+          [Op.gt]: id,
+        },
+      },
+    });
     res.json(messages);
   } catch (error) {
     console.error(error);
