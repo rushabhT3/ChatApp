@@ -14,13 +14,6 @@ const UserGroups = sequelize.define("UserGroups", {
     allowNull: false,
   },
 });
-
-UserGroups.associate = (models) => {
-  // Define associations here
-  UserGroups.belongsTo(models.Users);
-  UserGroups.belongsTo(models.Groups);
-};
-
 module.exports = UserGroups;
 
 // const UserGroups = sequelize.define("UserGroups", {
@@ -36,6 +29,14 @@ module.exports = UserGroups;
 //     allowNull: false,
 //   },
 // });
+
+// UserGroups.associate = (models) => {
+//   // Define associations here
+//   UserGroups.belongsTo(models.Users);
+//   UserGroups.belongsTo(models.Groups);
+// };
+
+//
 
 // module.exports = UserGroups;
 

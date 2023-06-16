@@ -51,6 +51,7 @@ const getGroupDetail = async (req, res) => {
     res.json(members);
   } catch (error) {
     console.error({ error: error });
+    res.json(error);
   }
 };
 
