@@ -44,7 +44,7 @@ const MAX_MESSAGES = 10;
 let storedMessages = JSON.parse(localStorage.getItem("storedMessages")) || [];
 
 // window.addEventListener("load", () => {
-// setInterval(getMessages, 1000)
+//   setInterval(getMessages, 1000);
 // });
 
 window.addEventListener("load", getMessages());
@@ -129,4 +129,59 @@ async function getMessages() {
   //   console.log("Displaying message on left side");
   //   document.querySelector("#message-area .left").innerHTML += `<br>${text}`;
   // }
+}
+
+document.addEventListener("DOMContentLoaded", getGroups());
+async function getGroups() {
+  const response = await axios.get("http://localhost:3000/getGroups");
+  const groups = response.data;
+  console.log(groups);
+
+  const list = document.createElement("ul");
+
+  for (const group of groups) {
+    const listItem = document.createElement("li");
+    const link = document.createElement("a");
+    link.textContent = group.groupName;
+    link.href = "#";
+    link.addEventListener("click", async () => {
+      const response2 = await axios.get(
+        `http://localhost:3000/getGroupDetail?groupId=${group.groupId}&groupName=${group.groupName}`
+      );
+      console.log(response2.data);
+    });
+    listItem.appendChild(link);
+    list.appendChild(listItem);
+  }
+  const groupList = document.getElementById("groupList");
+  groupList.appendChild(list);
+}
+
+function makeGroup() {
+  const token = localStorage.getItem("token");
+  const form = document.getElementById("groupForm");
+  form.style.display = "block";
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const groupName = event.target.elements.groupName.value;
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/makeGroup",
+        { groupName: groupName },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(response.data);
+      form.style.display = "none";
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.error);
+      } else {
+        console.error(error);
+      }
+    }
+  });
 }

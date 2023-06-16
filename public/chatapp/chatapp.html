@@ -15,6 +15,20 @@
             <img src="logo.png" alt="ChatG Logo">
             <h1>Welcome to ChatG</h1>
         </div>
+        <div class="container-left" style="float: left; width: 20%; min-height: 50vh;
+        max-height: 80vh;">
+            <p>Members:</p>
+        </div>
+        <div class="container-right" style="float: right; width: 20%; min-height: 50vh;
+        max-height: 80vh;">
+            <p class="group-label">Groups:</p>
+            <button class="make-group-button" onclick="makeGroup()">+</button>
+            <li id="groupList" style="list-style: none;"></li>
+        </div>
+        <form id="groupForm" style="display: none;">
+            <input type="text" name="groupName" />
+            <button type="submit">Create Group</button>
+        </form>
         <div id="message-area">
             <div class="left">
                 Left:
@@ -25,13 +39,15 @@
         </div>
         <div class="input-container">
             <form action="#" method="post" onsubmit="sent(event)">
-                <input type="text" id="message-input" name="input" placeholder="Type your message...">
+                <input type="text" id="message-input" name="input" placeholder="Type your message..." width="100%">
                 <button id="send-button" type="submit">Send</button>
             </form>
         </div>
     </div>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
     <script src="chatapp.js"></script>
+    <!-- <script src="chatgroup.js"></script> -->
 </body>
 
 </html>
