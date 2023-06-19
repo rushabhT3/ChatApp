@@ -1,3 +1,4 @@
+const Groups = require("../models/groups");
 const GroupM = require("../models/groups");
 const UserGroupM = require("../models/userGroups");
 const Users = require("../models/users");
@@ -39,16 +40,25 @@ const getGroups = async (req, res) => {
 
 const getGroupDetail = async (req, res) => {
   try {
-    console.log("hi");
     const { groupId, groupName } = req.query;
-    console.log(Users.associations);
-    console.log(UserGroupM.associations);
-    const members = await UserGroupM.findAll({
-      where: { groupId: groupId },
-      include: Users,
+    const members = await Users.findAll({
+      include: [
+        {
+          model: Groups,
+          where: { groupId: groupId },
+          through: { foreignKey: "GroupGroupId" },
+        },
+      ],
     });
     console.log(members);
-    res.json(members);
+    // ! sending only the parts of the members
+    res.json(
+      members.map((member) => ({
+        id: member.id,
+        name: member.name,
+        email: member.email,
+      }))
+    );
   } catch (error) {
     console.error({ error: error });
     res.json(error);

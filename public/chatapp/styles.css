@@ -163,3 +163,19 @@ body {
   margin: 0;
   font-weight: bold;
 }
+
+.group-form {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.group-form input[type="text"] {
+  width: 70%;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.group-form button[type="submit"] {
+  padding: 5px 10px;
+}

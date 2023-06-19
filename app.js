@@ -4,8 +4,8 @@ const app = express();
 const port = 3000;
 
 const entryRoutes = require("./routes/router");
-const sequelize = require("./util/database");
 
+const sequelize = require("./util/database");
 const Users = require("./models/users");
 const Messages = require("./models/messages");
 const Groups = require("./models/groups");
@@ -20,8 +20,6 @@ app.use(
   })
 );
 
-app.use("/", entryRoutes);
-
 Groups.belongsToMany(Users, { through: UserGroups });
 Users.belongsToMany(Groups, { through: UserGroups });
 
@@ -30,6 +28,8 @@ Messages.belongsTo(Users);
 
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
+
+app.use("/", entryRoutes);
 
 sequelize
   .sync()

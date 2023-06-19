@@ -19,16 +19,17 @@
         max-height: 80vh;">
             <p>Members:</p>
         </div>
-        <div class="container-right" style="float: right; width: 20%; min-height: 50vh;
-        max-height: 80vh;">
+        <div class="container-right" style="float: right; width: 20%; min-height: 50vh; max-height: 80vh;">
             <p class="group-label">Groups:</p>
             <button class="make-group-button" onclick="makeGroup()">+</button>
-            <li id="groupList" style="list-style: none;"></li>
+            <ul id="groupList" style="list-style: none;"></ul>
+            <form id="groupForm" class="group-form" style="display: none;">
+                <input type="text" name="groupName" />
+                <button type="submit">Create Group</button>
+            </form>
         </div>
-        <form id="groupForm" style="display: none;">
-            <input type="text" name="groupName" />
-            <button type="submit">Create Group</button>
-        </form>
+
+
         <div id="message-area">
             <div class="left">
                 Left:
@@ -47,7 +48,6 @@
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
     <script src="chatapp.js"></script>
-    <!-- <script src="chatgroup.js"></script> -->
 </body>
 
 </html>
