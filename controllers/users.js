@@ -32,8 +32,8 @@ const signup = async (req, res) => {
   }
 };
 
-const generateAccessToken = (id, email) => {
-  return jwt.sign({ jwtId: id, email }, process.env.TOKEN_SECRET);
+const generateAccessToken = (id, email, name) => {
+  return jwt.sign({ jwtId: id, email, name }, process.env.TOKEN_SECRET);
 };
 
 const login = async (req, res) => {
@@ -44,7 +44,7 @@ const login = async (req, res) => {
       // ? bcrypt decoding: inserted and the encrypted password
       if (user && (await bcrypt.compare(password, user.password))) {
         // ? Generate JWT & Send the JWT in the response
-        const token = generateAccessToken(user.id, user.email);
+        const token = generateAccessToken(user.id, user.email, user.name);
         // console.log({ user, token });
         res.json({ user, token });
       } else {

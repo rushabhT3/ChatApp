@@ -1,4 +1,5 @@
-const Groups = require("../models/groups");
+const { Op } = require("sequelize");
+
 const GroupM = require("../models/groups");
 const UserGroupM = require("../models/userGroups");
 const Users = require("../models/users");
@@ -18,10 +19,6 @@ const makeGroup = async (req, res) => {
       groupName: groupName,
       createdBy: email,
     });
-    // const userGroup = await UserGroupM.create({
-    //   userId: id,
-    //   groupId: group.groupId,
-    // });
     const userGroup = await UserGroupM.create({
       isAdmin: true,
       GroupGroupId: group.groupId,
@@ -33,18 +30,28 @@ const makeGroup = async (req, res) => {
 };
 
 const getGroups = async (req, res) => {
-  const allGroups = await GroupM.findAll();
-  // console.log(allGroups);
-  res.json(allGroups);
+  const userId = req.query.userId;
+  console.log({ userId: userId });
+  const userGroups = await GroupM.findAll({
+    include: [
+      {
+        model: Users,
+        where: { id: userId },
+        through: { foreignKey: "UserId" },
+      },
+    ],
+  });
+  res.json(userGroups);
 };
 
 const getGroupDetail = async (req, res) => {
   try {
-    const { groupId, groupName } = req.query;
+    const { groupId, groupName, userId } = req.query;
+    console.log({ groupId, groupName, userId });
     const members = await Users.findAll({
       include: [
         {
-          model: Groups,
+          model: GroupM,
           where: { groupId: groupId },
           through: { foreignKey: "GroupGroupId" },
         },
@@ -65,4 +72,45 @@ const getGroupDetail = async (req, res) => {
   }
 };
 
-module.exports = { makeGroup, getGroups, getGroupDetail };
+const searchedMembers = async (req, res) => {
+  try {
+    const { input } = req.query;
+    const members = await Users.findAll({
+      where: {
+        [Op.or]: [
+          { email: { [Op.like]: `%${input}%` } },
+          { phone: { [Op.like]: `%${input}%` } },
+        ],
+      },
+    });
+    res.json(
+      members.map((member) => ({
+        id: member.id,
+        name: member.name,
+        email: member.email,
+      }))
+    );
+  } catch (error) {
+    console.error({ BEsearchMembersError: error });
+    res.json(error);
+  }
+};
+
+const addMember = async (req, res) => {
+  const { groupId, memberId } = req.body;
+  console.log(groupId, memberId);
+  await UserGroupM.create({
+    isAdmin: false,
+    GroupGroupId: groupId,
+    UserId: memberId,
+  });
+  res.send("Member added to group");
+};
+
+module.exports = {
+  makeGroup,
+  getGroups,
+  getGroupDetail,
+  searchedMembers,
+  addMember,
+};

@@ -31,4 +31,16 @@ router.post(
   groupController.makeGroup
 );
 
+router.get(
+  "/search",
+  userauthentication.authenticate,
+  groupController.searchedMembers
+);
+
+router.post(
+  "/addMember",
+  userauthentication.authenticate,
+  groupController.addMember
+);
+
 module.exports = router;
