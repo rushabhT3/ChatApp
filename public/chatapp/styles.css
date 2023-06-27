@@ -11,10 +11,50 @@ body {
   background-color: #fff;
 }
 
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.col {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ebe4e5;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+}
+
+.col p {
+  margin: 0;
+}
+
+.make-group-button {
+  background-color: #4caf50;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.make-group-button:hover {
+  background-color: #43a047;
+  transform: scale(1.1);
+}
+
+.group-label {
+  display: inline-block;
+}
+
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: center;
 }
 
 .header img {
@@ -35,27 +75,52 @@ body {
 }
 
 .left {
-  float: left;
-  clear: both;
-  background-color: white;
+  background-color: rgb(228, 174, 174);
   color: black;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 10px;
+  text-align: left;
 }
 
 .right {
-  float: right;
-  clear: both;
   background-color: crimson;
   color: white;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 10px;
+  text-align: right;
 }
 
 .input-container {
   display: flex;
+  align-items: center;
+}
+
+.input-container form {
+  display: flex;
+  flex-grow: 1;
+}
+
+.input-container input[type="text"] {
+  flex-grow: 1;
+  padding: 6px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.input-container button {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.input-container button:hover {
+  background-color: #0069d9;
 }
 
 #message-input {
@@ -66,11 +131,51 @@ body {
 }
 
 #send-button {
-  background-color: crimson;
+  background-color: #007bff;
   color: #fff;
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
   margin-left: 10px;
   cursor: pointer;
+}
+
+.container-left,
+.container-right {
+  width: 20%;
+  min-height: 50vh;
+  max-height: 80vh;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+.container-left {
+  float: left;
+}
+
+.container-right {
+  float: right;
+}
+
+.container-left p,
+.container-right p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.group-form {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.group-form input[type="text"] {
+  width: 70%;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.group-form button[type="submit"] {
+  padding: 5px 10px;
 }

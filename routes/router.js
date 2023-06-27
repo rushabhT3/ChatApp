@@ -5,6 +5,7 @@ const userauthentication = require("../middlewares/auth");
 
 const entryController = require("../controllers/users");
 const messageController = require("../controllers/messages");
+const groupController = require("../controllers/groups");
 
 router.post("/signup", entryController.signup);
 router.post("/login", entryController.login);
@@ -20,6 +21,26 @@ router.get(
   "/getMessages",
   userauthentication.authenticate,
   messageController.getMessages
+);
+router.get("/getGroups", groupController.getGroups);
+router.get("/getGroupDetail", groupController.getGroupDetail);
+
+router.post(
+  "/makeGroup",
+  userauthentication.authenticate,
+  groupController.makeGroup
+);
+
+router.get(
+  "/search",
+  userauthentication.authenticate,
+  groupController.searchedMembers
+);
+
+router.post(
+  "/addMember",
+  userauthentication.authenticate,
+  groupController.addMember
 );
 
 module.exports = router;

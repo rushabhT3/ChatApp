@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../util/database");
 
 // ? we are using the .define method on the sequelize database
-const User = sequelize.define("User", {
+const Users = sequelize.define("Users", {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -30,4 +30,4 @@ const User = sequelize.define("User", {
   },
 });
 
-module.exports = User;
+module.exports = Users;
