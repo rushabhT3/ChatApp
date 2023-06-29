@@ -1,3 +1,5 @@
+const API_URL = "http://localhost:3000";
+
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
   var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -25,16 +27,12 @@ async function sent(e) {
     };
     console.log(context);
     const token = localStorage.getItem("token");
-    const response = await axios.post(
-      "http://localhost:3000/sendMessage",
-      context,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
-    messageInput.value = "";
+    const response = await axios.post(`${API_URL}/sendMessage`, context, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    // messageInput.value = "";
   } catch (error) {
     console.log({ FunctionSentFE: error });
   }
@@ -47,19 +45,21 @@ let storedMessages = JSON.parse(localStorage.getItem("storedMessages")) || [];
 const messageArea = document.querySelector("#message-area");
 const leftMessageArea = messageArea.querySelector(".left");
 const rightMessageArea = messageArea.querySelector(".right");
-leftMessageArea.innerHTML = "Left:";
-rightMessageArea.innerHTML = "Right:";
+leftMessageArea.textContent = "Left:";
+rightMessageArea.textContent = "Right:";
 
-window.addEventListener("load", getMessages);
+document.addEventListener("DOMContentLoaded", () => {
+  getMessages();
+  setInterval(getMessages, 5000);
+});
 
 async function getMessages() {
   const token = localStorage.getItem("token");
   const decodedToken = parseJwt(token);
   const lastMessageId = localStorage.getItem("lastMessageId") || 0;
-  // console.log({ here: decodedToken, lastMessageId });
 
   const response = await axios.get(
-    `http://localhost:3000/getMessages?id=${lastMessageId}&groupId=${localStorage.getItem(
+    `${API_URL}/getMessages?id=${lastMessageId}&groupId=${localStorage.getItem(
       "groupId"
     )}`,
     {
@@ -68,7 +68,11 @@ async function getMessages() {
       },
     }
   );
+
   const messages = response.data;
+  rightMessageArea.textContent = "Right:";
+  leftMessageArea.textContent = "Left:";
+
   for (const message of messages) {
     const { id, UserId, createdAt, text } = message;
     const key = `${UserId}-${createdAt}`;
@@ -84,6 +88,7 @@ async function getMessages() {
       }
       localStorage.setItem("storedMessages", JSON.stringify(storedMessages));
     }
+
     const isRightMessage = UserId === decodedToken.jwtId;
     const messageArea = isRightMessage ? rightMessageArea : leftMessageArea;
     const newMessage = document.createElement("div");
@@ -91,26 +96,19 @@ async function getMessages() {
     newMessage.textContent = text;
     messageArea.appendChild(newMessage);
   }
-  storedMessages.forEach((keys) => {
-    console.log({ keys: keys });
-    const parsedLocalObject = JSON.parse(localStorage.getItem(keys));
+
+  storedMessages.forEach((key) => {
+    const parsedLocalObject = JSON.parse(localStorage.getItem(key));
     const groupId = localStorage.getItem("groupId");
+
     if (parsedLocalObject.GroupGroupId == groupId) {
-      const isRightMessage = keys[0] == decodedToken.jwtId;
+      const isRightMessage = key.split("-")[0] == decodedToken.jwtId;
       const messageArea = isRightMessage ? rightMessageArea : leftMessageArea;
-      messageArea.innerHTML += `<div>${parsedLocalObject.text}</div>`;
+      const newMessage = document.createElement("div");
+      newMessage.textContent = parsedLocalObject.text;
+      messageArea.appendChild(newMessage);
     }
   });
-}
-
-async function fetchGroups() {
-  const token = localStorage.getItem("token");
-  const decodedToken = parseJwt(token);
-  const userId = decodedToken.jwtId;
-  const response = await axios.get(
-    `http://localhost:3000/getGroups?userId=${userId}`
-  );
-  return response.data;
 }
 
 function updateMemberList(members, groupName) {
@@ -127,15 +125,108 @@ function updateMemberList(members, groupName) {
   const groupTitle = document.createElement("h2");
   groupTitle.setAttribute("id", "groupTitle");
   groupTitle.textContent = groupName;
+  Object.assign(groupTitle.style, {
+    color: "green",
+    fontSize: "20px",
+  });
   container.appendChild(groupTitle);
 
   const memberList = document.createElement("ul");
+  Object.assign(memberList.style, {
+    listStyleType: "none",
+    padding: "0",
+    margin: "0",
+  });
   for (const member of members) {
     const listItem = document.createElement("li");
     listItem.textContent = member.name;
+    Object.assign(listItem.style, {
+      fontSize: "16px",
+      marginBottom: "5px",
+      padding: "5px",
+      backgroundColor: "#f2f2f2",
+      borderRadius: "3px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    });
+    const makeAdminButton = document.createElement("button");
+    makeAdminButton.textContent = "Make Admin";
+    Object.assign(makeAdminButton.style, {
+      color: "white",
+      backgroundColor: "#4CAF50",
+      borderRadius: "3px",
+    });
+    makeAdminButton.addEventListener("click", async () => {
+      try {
+        const data = {
+          memberId: member.id,
+          groupId: localStorage.getItem("groupId"),
+        };
+        const response = await axios.post(`${API_URL}/makeAdmin/`, data);
+        if (response.status === 200) {
+          alert(response.data.message);
+        } else {
+          alert("An error occurred");
+        }
+      } catch (error) {
+        if (error.response) {
+          alert(error.response.data.message);
+        } else {
+          alert("An error occurred");
+        }
+      }
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "X";
+    Object.assign(deleteButton.style, {
+      color: "white",
+      backgroundColor: "#ff4d4d",
+      borderRadius: "3px",
+    });
+    deleteButton.addEventListener("click", async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const decodedToken = parseJwt(token);
+        const userId = decodedToken.jwtId;
+        console.log(
+          decodedToken,
+          { userId: userId },
+          localStorage.getItem("groupId"),
+          member.id
+        );
+        await axios.delete(
+          `${API_URL}/deleteMember/${member.id}&${localStorage.getItem(
+            "groupId"
+          )}`,
+          {
+            headers: {
+              loginId: userId,
+            },
+          }
+        );
+        console.log("Member deleted successfully");
+        memberList.removeChild(listItem);
+      } catch (error) {
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data);
+        }
+      }
+    });
+    listItem.appendChild(makeAdminButton);
+    listItem.appendChild(deleteButton);
     memberList.appendChild(listItem);
   }
   container.appendChild(memberList);
+}
+
+async function fetchGroups() {
+  const token = localStorage.getItem("token");
+  const decodedToken = parseJwt(token);
+  const userId = decodedToken.jwtId;
+  const response = await axios.get(`${API_URL}/getGroups?userId=${userId}`);
+  return response.data;
 }
 
 document.addEventListener("DOMContentLoaded", getGroups);
@@ -152,9 +243,13 @@ async function getGroups() {
     const link = document.createElement("a");
     link.textContent = group.groupName;
     link.href = "#";
+    Object.assign(link.style, {
+      color: "blue",
+      textDecoration: "none",
+    });
     link.addEventListener("click", async () => {
       const response2 = await axios.get(
-        `http://localhost:3000/getGroupDetail?groupId=${group.groupId}&userId=${decodedToken.jwtId}&groupName=${group.groupName}`
+        `${API_URL}/getGroupDetail?groupId=${group.groupId}&userId=${decodedToken.jwtId}&groupName=${group.groupName}`
       );
       localStorage.setItem("groupId", group.groupId);
       updateMemberList(response2.data, group.groupName);
@@ -170,16 +265,29 @@ async function getGroups() {
       searchBox.setAttribute("type", "text");
       searchBox.setAttribute("placeholder", "search by email or phone");
       searchBox.setAttribute("id", "searchBox");
+      Object.assign(searchBox.style, {
+        padding: "5px",
+        borderRadius: "3px",
+        border: "1px solid #ccc",
+      });
 
       const searchButton = document.createElement("button");
       searchButton.textContent = "Search";
       searchButton.setAttribute("id", "searchButton");
+      Object.assign(searchButton.style, {
+        padding: "5px 10px",
+        borderRadius: "3px",
+        border: "none",
+        backgroundColor: "#4CAF50",
+        color: "white",
+        marginLeft: "5px",
+      });
 
       searchButton.addEventListener("click", async () => {
         const searchInput = searchBox.value;
         if (searchInput) {
           const response3 = await axios.get(
-            `http://localhost:3000/search?input=${searchInput}`,
+            `${API_URL}/search?input=${searchInput}`,
             {
               headers: {
                 Authorization: token,
@@ -203,19 +311,26 @@ async function getGroups() {
             const addButton = document.createElement("button");
             addButton.textContent = "Add";
             addButton.addEventListener("click", async () => {
-              const response4 = await axios.post(
-                `http://localhost:3000/addMember`,
-                {
-                  groupId: group.groupId,
-                  memberId: result.id,
-                },
-                {
-                  headers: {
-                    Authorization: token,
+              try {
+                const response4 = await axios.post(
+                  `${API_URL}/addMember`,
+                  {
+                    groupId: group.groupId,
+                    memberId: result.id,
                   },
+                  {
+                    headers: {
+                      Authorization: token,
+                    },
+                  }
+                );
+              } catch (error) {
+                if (error.response && error.response.status === 400) {
+                  alert(error.response.data);
                 }
-              );
+              }
             });
+
             resultItem.appendChild(addButton);
             resultsList.appendChild(resultItem);
           }
@@ -241,7 +356,7 @@ function makeGroup() {
     const groupName = event.target.elements.groupName.value;
     try {
       const response = await axios.post(
-        "http://localhost:3000/makeGroup",
+        `${API_URL}/makeGroup`,
         { groupName: groupName },
         {
           headers: {
