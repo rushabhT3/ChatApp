@@ -43,4 +43,8 @@ router.post(
   groupController.addMember
 );
 
+router.delete("/deleteMember/:memberId&:groupId", groupController.deleteMember);
+
+router.post("/makeAdmin", groupController.makeAdmin);
+
 module.exports = router;
