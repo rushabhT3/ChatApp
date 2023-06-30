@@ -104,6 +104,7 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    const API_URL = "http://localhost:3000";
     async function formSubmit(e) {
         e.preventDefault();
 
@@ -115,7 +116,7 @@
         if (name && email && phone && password) {
             const userData = { name, email, phone, password };
             try {
-                const response = await axios.post('http://localhost:3000/signup', userData);
+                const response = await axios.post(`${API_URL}/signup`, userData);
                 const form = document.getElementById("form-id");
                 form.reset();
                 if (response.status === 200) {
@@ -129,7 +130,7 @@
                 console.log(JSON.stringify(error));
                 if (error.response && error.response.status === 409) {
                     alert("User already exists, Please Login");
-                    window.location.href = "./login.html";
+                    window.location.href = "../login/login.html";
                 } else {
                     document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
                 }
