@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "http://43.205.231.251:3000";
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
