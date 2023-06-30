@@ -1,7 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const app = express();
-const port = 3000;
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 const entryRoutes = require("./routes/router");
 
@@ -20,6 +23,13 @@ app.use(
   })
 );
 
+app.use("/", entryRoutes);
+
+app.use((req, res) => {
+  console.log(path.join(__dirname, `public/${req.url}`));
+  res.sendFile(path.join(__dirname, `public/${req.url}`));
+});
+
 Groups.belongsToMany(Users, { through: UserGroups });
 Users.belongsToMany(Groups, { through: UserGroups });
 
@@ -29,8 +39,7 @@ Messages.belongsTo(Users);
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
 
-app.use("/", entryRoutes);
-
+const port = process.env.PORT || 3000;
 sequelize
   .sync()
   .then(() => {

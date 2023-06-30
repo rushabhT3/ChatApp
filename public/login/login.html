@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2" rel="stylesheet">
-    <title>Sign Up!</title>
+    <link href="https://fonts.googleapis.com/" rel="stylesheet">
+    <title>Login!</title>
     <style>
         body {
-            background-image: url('https://images.unsplash.com/photo-1525011268546-bf3f9b007f6a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80');
+            background-image: url('https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/rm422-047-kq92wx9y.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=b4691601fc97c7e239f0462f567837b6');
             background-size: cover;
             background-repeat: no-repeat;
             display: flex;
@@ -20,7 +20,7 @@
         }
 
         .card {
-            background-color: #87ceeb;
+            background-color: #90ee90;
             padding: 20px;
             width: 50%;
             max-width: 400px;
@@ -44,9 +44,7 @@
             font-family: 'Lobster', cursive;
         }
 
-        input[type=text],
         input[type=email],
-        input[type=tel],
         input[type=password] {
             padding: 12px 20px;
             margin-bottom: 12px;
@@ -55,7 +53,7 @@
         }
 
         input[type=submit] {
-            background-color: #0000ff;
+            background-color: #006400;
             color: white;
             padding: 14px 20px;
             margin-top: 12px;
@@ -66,80 +64,69 @@
         }
 
         input[type=submit]:hover {
-            background-color: #0000cc;
+            background-color: #228B22;
         }
 
         .card a {
             text-align: center;
             margin-top: 12px;
-            color: #0000ff;
+            color: #006400;
             text-decoration: none;
             font-family: 'Lobster', cursive;
         }
 
         .card a:hover {
-            color: #0000cc;
+            color: #176117;
         }
     </style>
 </head>
 
 <body>
     <div class="card">
-        <h2>Sign Up</h2>
-        <form id="form-id" onsubmit="formSubmit(event)">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        <h2>Login</h2>
+        <form id='form-id' onsubmit="formSubmit(event)">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
             <input type="submit" value="Submit">
         </form>
         <div style="text-align: center;">
-            <a href="./login.html">Existing User? Login!</a>
+            <a href="../signup/signup.html">New User? Sign Up!</a>
         </div>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    const API_URL = "http://localhost:3000";
     async function formSubmit(e) {
         e.preventDefault();
 
-        const name = event.target.name.value;
         const email = event.target.email.value;
-        const phone = event.target.phone.value;
         const password = event.target.password.value;
 
-        if (name && email && phone && password) {
-            const userData = { name, email, phone, password };
+        if (email && password) {
+            const userData = { email, password };
+
             try {
-                const response = await axios.post('http://localhost:3000/signup', userData);
+                const response = await axios.post(`${API_URL}/login`, userData);
+                console.log(response.data);
                 const form = document.getElementById("form-id");
                 form.reset();
                 if (response.status === 200) {
-                    alert("Successfully signed up");
-                    window.location.href = "./login.html";
+                    const token = response.data.token;
+                    localStorage.setItem('token', token);
+                    window.location.href = "../chatapp/chatapp.html";
                 } else {
-                    throw new Error("failed to Sign Up");
+                    throw new Error("failed to login");
                 }
-            }
-            catch (error) {
+            } catch (error) {
                 console.log(JSON.stringify(error));
-                if (error.response && error.response.status === 409) {
-                    alert("User already exists, Please Login");
-                    window.location.href = "./login.html";
-                } else {
-                    document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
-                }
+                document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
             }
-        }
-        else {
-            document.body.innerHTML += `<div style="color:red">Please fill in all the form fields</div>`;
-        }
+        };
     }
-
 </script>
+
 
 </html>
