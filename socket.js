@@ -1,17 +1,18 @@
-const socketIo = require("socket.io");
-
-function setupSocketIo(http) {
-  const io = socketIo(http);
+module.exports = (http) => {
+  const io = require("socket.io")(http, {
+    cors: {
+      origin: "http://127.0.0.1:5500",
+    },
+  });
 
   io.on("connection", (socket) => {
-    console.log("New client connected");
-
-    // Listen for events emitted by the client and handle them here
+    console.log("a user connected");
+    socket.on("newMessage", (message) => {
+      io.emit("newMessage", message);
+    });
 
     socket.on("disconnect", () => {
-      console.log("Client disconnected");
+      console.log("user disconnected");
     });
   });
-}
-
-module.exports = setupSocketIo;
+};

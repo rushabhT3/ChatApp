@@ -26,7 +26,6 @@ app.use(
 app.use("/", entryRoutes);
 
 app.use((req, res) => {
-  console.log(path.join(__dirname, `public/${req.url}`));
   res.sendFile(path.join(__dirname, `public/${req.url}`));
 });
 
@@ -39,11 +38,16 @@ Messages.belongsTo(Users);
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
 
+// Add the following lines to set up the Socket.IO server
+const http = require("http").createServer(app);
+require("./socket")(http);
+
 const port = process.env.PORT || 3000;
 sequelize
   .sync()
   .then(() => {
-    app.listen(port, () => {
+    // Change app.listen to http.listen
+    http.listen(port, () => {
       console.log(`Chat app: listening on port ${port}`);
     });
   })

@@ -1,4 +1,11 @@
-const API_URL = "http://43.205.231.251:3000";
+const API_URL = "http://localhost:3000";
+const socket = io(API_URL); // Replace with your server's address
+
+socket.on("newMessage", (message) => {
+  // Update the UI with the new message
+  // Replace this with your own logic for displaying new messages
+  console.log(message);
+});
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -50,7 +57,7 @@ rightMessageArea.textContent = "Right:";
 
 document.addEventListener("DOMContentLoaded", () => {
   getMessages();
-  setInterval(getMessages, 5000);
+  // setInterval(getMessages, 5000);
 });
 
 async function getMessages() {
