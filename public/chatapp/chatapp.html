@@ -40,13 +40,14 @@
         </div>
         <div class="input-container">
             <form action="#" method="post" onsubmit="sent(event)">
-                <input type="text" id="message-input" name="input" placeholder="Type your message..." width="100%">
+                <input type="text" id="message-input" name="input" placeholder="Type your message..." width="100%"
+                    required>
                 <button id="send-button" type="submit">Send</button>
             </form>
         </div>
     </div>
     <div><button id="delete-button">Exit Group Messages!</button></div>
-    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
     <script src="chatapp.js"></script>
 </body>

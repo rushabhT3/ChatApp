@@ -78,6 +78,14 @@
         .card a:hover {
             color: #176117;
         }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .card {
+                width: 90%;
+                max-width: none;
+            }
+        }
     </style>
 </head>
 
@@ -98,7 +106,7 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    const API_URL = "http://43.205.231.251:3000";
+    const API_URL = "http://localhost:3000";
     async function formSubmit(e) {
         e.preventDefault();
 

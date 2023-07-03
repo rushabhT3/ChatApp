@@ -1,7 +1,17 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+  },
+  /* options */
+});
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -26,7 +36,6 @@ app.use(
 app.use("/", entryRoutes);
 
 app.use((req, res) => {
-  console.log(path.join(__dirname, `public/${req.url}`));
   res.sendFile(path.join(__dirname, `public/${req.url}`));
 });
 
@@ -39,14 +48,36 @@ Messages.belongsTo(Users);
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
 
+/* 
+! This sets up an event listener for the "connection" event.
+! When a client connects to the server, the callback function is called 
+! with a socket object representing the connection.
+*/
+io.on("connection", (socket) => {
+  console.log("BE: io.on connection");
+
+  socket.on("sendMessage", (message) => {
+    io.emit("messageReceived");
+  });
+
+  socket.on("createGroup", (group) => {
+    io.emit("groupUpdated");
+  });
+
+  socket.on("memberAdded", () => {
+    io.emit("groupUpdated");
+  });
+});
+
 const port = process.env.PORT || 3000;
 sequelize
   .sync()
   .then(() => {
-    app.listen(port, () => {
+    // ! Using app.listen(3000) will not work here, as it creates a new HTTP server.
+    httpServer.listen(port, () => {
       console.log(`Chat app: listening on port ${port}`);
     });
   })
   .catch((error) => {
-    console.error("Error synchronizing with database:", error);
+    console.error("Error synchronizing with the database:", error);
   });
