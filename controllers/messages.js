@@ -7,7 +7,7 @@ const UserM = require("../models/users");
 const sendMessage = async (req, res) => {
   try {
     const { context, groupId } = req.body;
-    console.log("helllllllllllllllllllllll", { context, groupId });
+    // console.log("helllllllllllllllllllllll", { context, groupId });
     // ? getting the email from the middleware
     const email = req.authUser.email;
     const user = await UserM.findOne({ where: { email } });
@@ -19,6 +19,7 @@ const sendMessage = async (req, res) => {
       text: context,
       GroupGroupId: groupId, //! include the groupId when creating a new message
     });
+    // socket.emit("messageReceived");
     res.status(201).json({ message });
   } catch (error) {
     console.error(error);
@@ -42,7 +43,7 @@ const getMessages = async (req, res) => {
         GroupGroupId: groupId,
       },
     });
-    console.log(messages);
+    // console.log(messages);
     res.json(messages);
   } catch (error) {
     console.error(error);

@@ -6,7 +6,7 @@ module.exports = (http) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log("Socket Backend: a user connected");
     socket.on("newMessage", (message) => {
       io.emit("newMessage", message);
     });

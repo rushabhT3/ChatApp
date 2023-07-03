@@ -1,13 +1,10 @@
 const { Op } = require("sequelize");
-
 const GroupM = require("../models/groups");
 const UserGroupM = require("../models/userGroups");
 const Users = require("../models/users");
 
 const makeGroup = async (req, res) => {
-  console.log(req.authUser);
   const { email, id } = req.authUser;
-  console.log(id);
   const groupName = req.body.groupName;
   const existingGroup = await GroupM.findOne({
     where: { groupName: groupName },
@@ -24,14 +21,13 @@ const makeGroup = async (req, res) => {
       GroupGroupId: group.groupId,
       UserId: id,
     });
-    console.log({ group, userGroup });
+    // io.emit("groupCreated", group);
     res.status(201).json({ group, userGroup });
   }
 };
 
 const getGroups = async (req, res) => {
   const userId = req.query.userId;
-  console.log({ userId: userId });
   const userGroups = await GroupM.findAll({
     include: [
       {
@@ -47,7 +43,6 @@ const getGroups = async (req, res) => {
 const getGroupDetail = async (req, res) => {
   try {
     const { groupId, groupName, userId } = req.query;
-    console.log({ groupId, groupName, userId });
     const members = await Users.findAll({
       include: [
         {
@@ -57,8 +52,6 @@ const getGroupDetail = async (req, res) => {
         },
       ],
     });
-    console.log(members);
-    // ! sending only the parts of the members
     res.json(
       members.map((member) => ({
         id: member.id,
@@ -99,7 +92,6 @@ const searchedMembers = async (req, res) => {
 const addMember = async (req, res) => {
   try {
     const { groupId, memberId } = req.body;
-    console.log(groupId, memberId);
     const existingMember = await UserGroupM.findOne({
       where: {
         GroupGroupId: groupId,
@@ -112,6 +104,7 @@ const addMember = async (req, res) => {
         GroupGroupId: groupId,
         UserId: memberId,
       });
+
       res.send("Member added to group");
     } else {
       res.status(400).send("Member already exists in the group");
@@ -124,9 +117,7 @@ const addMember = async (req, res) => {
 const deleteMember = async (req, res) => {
   try {
     const { memberId, groupId } = req.params;
-    // console.log(req.headers);
     const loginId = req.headers.loginid;
-    // console.log({ loginId, memberId, groupId });
     const member = await UserGroupM.findOne({
       where: {
         UserId: memberId,

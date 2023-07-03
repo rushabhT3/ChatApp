@@ -1,10 +1,18 @@
 const API_URL = "http://localhost:3000";
-const socket = io(API_URL); // Replace with your server's address
 
-socket.on("newMessage", (message) => {
-  // Update the UI with the new message
-  // Replace this with your own logic for displaying new messages
-  console.log(message);
+const socket = io(API_URL);
+
+document.addEventListener("DOMContentLoaded", () => {
+  getMessages();
+  getGroups();
+});
+
+socket.on("messageReceived", () => {
+  getMessages();
+});
+
+socket.on("groupUpdated", () => {
+  getGroups();
 });
 
 function parseJwt(token) {
@@ -27,19 +35,25 @@ async function sent(e) {
     e.preventDefault();
     const messageInput = document.getElementById("message-input");
     const message = messageInput.value;
+    // ! trim() method to remove any leading or trailing whitespace from the message variable
+    if (message.trim() === "") {
+      return;
+    }
     const groupId = localStorage.getItem("groupId");
     const context = {
       context: message,
       groupId: groupId,
     };
-    console.log(context);
     const token = localStorage.getItem("token");
     const response = await axios.post(`${API_URL}/sendMessage`, context, {
       headers: {
         Authorization: token,
       },
     });
-    // messageInput.value = "";
+    socket.emit("sendMessage", () => {
+      console.log("FE: sent is getting emitted");
+    });
+    messageInput.value = "";
   } catch (error) {
     console.log({ FunctionSentFE: error });
   }
@@ -54,11 +68,6 @@ const leftMessageArea = messageArea.querySelector(".left");
 const rightMessageArea = messageArea.querySelector(".right");
 leftMessageArea.textContent = "Left:";
 rightMessageArea.textContent = "Right:";
-
-document.addEventListener("DOMContentLoaded", () => {
-  getMessages();
-  // setInterval(getMessages, 5000);
-});
 
 async function getMessages() {
   const token = localStorage.getItem("token");
@@ -100,7 +109,7 @@ async function getMessages() {
     const messageArea = isRightMessage ? rightMessageArea : leftMessageArea;
     const newMessage = document.createElement("div");
     newMessage.classList.add("message");
-    newMessage.textContent = text;
+    // newMessage.textContent = text;
     messageArea.appendChild(newMessage);
   }
 
@@ -197,12 +206,6 @@ function updateMemberList(members, groupName) {
         const token = localStorage.getItem("token");
         const decodedToken = parseJwt(token);
         const userId = decodedToken.jwtId;
-        console.log(
-          decodedToken,
-          { userId: userId },
-          localStorage.getItem("groupId"),
-          member.id
-        );
         await axios.delete(
           `${API_URL}/deleteMember/${member.id}&${localStorage.getItem(
             "groupId"
@@ -236,11 +239,13 @@ async function fetchGroups() {
   return response.data;
 }
 
-document.addEventListener("DOMContentLoaded", getGroups);
 async function getGroups() {
   const token = localStorage.getItem("token");
   const decodedToken = parseJwt(token);
   const groups = await fetchGroups();
+
+  const groupList = document.getElementById("groupList");
+  groupList.innerHTML = "";
 
   const list = document.createElement("ul");
   const container = document.querySelector(".container-left");
@@ -260,6 +265,7 @@ async function getGroups() {
       );
       localStorage.setItem("groupId", group.groupId);
       updateMemberList(response2.data, group.groupName);
+      getMessages();
 
       ["#searchBox", "#searchButton"].forEach((selector) => {
         const existingElement = container.querySelector(selector);
@@ -301,8 +307,6 @@ async function getGroups() {
               },
             }
           );
-          // console.log(response3.data);
-
           const existingResultsList = container.querySelector("#resultsList");
           if (existingResultsList) {
             container.removeChild(existingResultsList);
@@ -331,6 +335,11 @@ async function getGroups() {
                     },
                   }
                 );
+                resultsList.removeChild(resultItem);
+                socket.emit("memberAdded", {
+                  groupId: group.groupId,
+                  memberId: result.id,
+                });
               } catch (error) {
                 if (error.response && error.response.status === 400) {
                   alert(error.response.data);
@@ -350,7 +359,6 @@ async function getGroups() {
     listItem.appendChild(link);
     list.appendChild(listItem);
   }
-  const groupList = document.getElementById("groupList");
   groupList.appendChild(list);
 }
 
@@ -372,6 +380,9 @@ function makeGroup() {
         }
       );
       form.style.display = "none";
+      socket.emit("createGroup", () => {
+        console.log("FE: makeGroup is getting emitted");
+      });
     } catch (error) {
       if (error.response && error.response.status === 400) {
         alert(error.response.data.error);
