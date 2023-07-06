@@ -146,6 +146,10 @@ body {
   cursor: pointer;
 }
 
+.attachment-icon {
+  cursor: pointer;
+}
+
 .container-left,
 .container-right {
   width: 100%;
