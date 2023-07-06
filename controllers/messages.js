@@ -1,8 +1,10 @@
 const { Op } = require("sequelize");
+const cron = require("node-cron");
 
 // ? M in the end of variables is for model
 const MessageM = require("../models/messages");
 const UserM = require("../models/users");
+const ArchivedChat = require("../models/archivedChat");
 
 const { uploadToS3 } = require("../Services/s3services");
 
@@ -50,7 +52,6 @@ const getMessages = async (req, res) => {
           // ? to use the sequelize function '>' than the given id
           [Op.gt]: id,
         },
-        // ! groupId
         GroupGroupId: groupId,
       },
     });
@@ -61,6 +62,31 @@ const getMessages = async (req, res) => {
     res.status(500).json({ message: "Error getting messages" });
   }
 };
+
+cron.schedule("0 0 * * *", async () => {
+  const oneDayAgo = new Date();
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+  const oldMessages = await MessageM.findAll({
+    where: {
+      createdAt: {
+        [Op.lt]: oneDayAgo,
+      },
+    },
+  });
+
+  await Promise.all(
+    oldMessages.map((message) => ArchivedChat.create(message.dataValues))
+  );
+
+  // ? Op.It: value is less than `oneDayAgo`.
+  await MessageM.destroy({
+    where: {
+      createdAt: {
+        [Op.lt]: oneDayAgo,
+      },
+    },
+  });
+});
 
 module.exports = {
   sendMessage,
