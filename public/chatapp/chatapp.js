@@ -3,6 +3,7 @@ const API_URL = "http://localhost:3000";
 const socket = io(API_URL);
 
 document.addEventListener("DOMContentLoaded", () => {
+  localStorage.removeItem("groupId");
   getMessages();
   getGroups();
 });
@@ -30,30 +31,52 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
+const fileInput = document.getElementById("file-input");
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length > 0) {
+    const fileName = fileInput.files[0].name;
+    // update the page to show the file name
+    // or show an alert that a file has been attached
+    alert(`File attached: ${fileName}`);
+  } else {
+    // update the page to show that no file is attached
+  }
+});
+
 async function sent(e) {
   try {
     e.preventDefault();
     const messageInput = document.getElementById("message-input");
     const message = messageInput.value;
     // ! trim() method to remove any leading or trailing whitespace from the message variable
-    if (message.trim() === "") {
+
+    const groupId = localStorage.getItem("groupId");
+    const fileInput = document.getElementById("file-input");
+
+    if (message.trim() === "" && fileInput.files.length == 0) {
       return;
     }
-    const groupId = localStorage.getItem("groupId");
-    const context = {
-      context: message,
-      groupId: groupId,
-    };
+
+    const formData = new FormData();
+    formData.append("context", message);
+    formData.append("groupId", groupId);
+    for (const file of fileInput.files) {
+      formData.append("attachment", file);
+    }
+
     const token = localStorage.getItem("token");
-    const response = await axios.post(`${API_URL}/sendMessage`, context, {
+    const response = await axios.post(`${API_URL}/sendMessage`, formData, {
       headers: {
         Authorization: token,
+        "Content-Type": "multipart/form-data",
       },
     });
+    console.log(response.data);
     socket.emit("sendMessage", () => {
       console.log("FE: sent is getting emitted");
     });
     messageInput.value = "";
+    fileInput.value = "";
   } catch (error) {
     console.log({ FunctionSentFE: error });
   }
@@ -122,6 +145,13 @@ async function getMessages() {
       const messageArea = isRightMessage ? rightMessageArea : leftMessageArea;
       const newMessage = document.createElement("div");
       newMessage.textContent = parsedLocalObject.text;
+      for (const element of JSON.parse(parsedLocalObject.attachment)) {
+        const link = document.createElement("a");
+        link.href = element;
+        link.textContent = element;
+        newMessage.appendChild(link);
+      }
+      // console.log(parsedLocalObject.text, parsedLocalObject.attachment);
       messageArea.appendChild(newMessage);
     }
   });
@@ -395,4 +425,5 @@ function makeGroup() {
 
 document.querySelector("#delete-button").addEventListener("click", () => {
   localStorage.removeItem("groupId");
+  location.reload();
 });

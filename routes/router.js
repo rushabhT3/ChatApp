@@ -1,5 +1,7 @@
 const express = require("express");
+const multer = require("multer");
 const router = express.Router();
+const upload = multer();
 
 const userauthentication = require("../middlewares/auth");
 
@@ -14,6 +16,7 @@ router.get("/random", entryController.random);
 router.post(
   "/sendMessage",
   userauthentication.authenticate,
+  upload.any(),
   messageController.sendMessage
 );
 

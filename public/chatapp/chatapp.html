@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>ChatG</title>
 </head>
 
@@ -39,10 +40,13 @@
             </div>
         </div>
         <div class="input-container">
-            <form action="#" method="post" onsubmit="sent(event)">
-                <input type="text" id="message-input" name="input" placeholder="Type your message..." width="100%"
-                    required>
+            <form action="#" method="post" onsubmit="sent(event)" enctype="multipart/form-data">
+                <input type="text" id="message-input" name="input" placeholder="Type your message..." width="100%">
+
+                <label for="file-input"> <i class="fa fa-paperclip attachment-icon"></i> </label>
+                <input type="file" id="file-input" multiple name="attachment" style="display: none;">
                 <button id="send-button" type="submit">Send</button>
+
             </form>
         </div>
     </div>

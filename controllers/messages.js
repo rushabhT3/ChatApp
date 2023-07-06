@@ -4,22 +4,33 @@ const { Op } = require("sequelize");
 const MessageM = require("../models/messages");
 const UserM = require("../models/users");
 
+const { uploadToS3 } = require("../Services/s3services");
+
 const sendMessage = async (req, res) => {
   try {
     const { context, groupId } = req.body;
-    // console.log("helllllllllllllllllllllll", { context, groupId });
+    // console.log(req.body, req.files);
     // ? getting the email from the middleware
     const email = req.authUser.email;
     const user = await UserM.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+    const attachmentUrls = [];
+    // console.log("req.file", req.files);
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        // console.log({ buffer: file.buffer, originalname: file.originalname });
+        const attachmentUrl = await uploadToS3(file.buffer, file.originalname);
+        attachmentUrls.push(attachmentUrl);
+      }
+    }
     const message = await MessageM.create({
       UserId: user.id,
-      text: context,
-      GroupGroupId: groupId, //! include the groupId when creating a new message
+      text: context || "",
+      GroupGroupId: groupId,
+      attachment: JSON.stringify(attachmentUrls),
     });
-    // socket.emit("messageReceived");
     res.status(201).json({ message });
   } catch (error) {
     console.error(error);
