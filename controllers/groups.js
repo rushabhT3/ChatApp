@@ -28,6 +28,7 @@ const makeGroup = async (req, res) => {
 
 const getGroups = async (req, res) => {
   const userId = req.query.userId;
+  // ! query returns an array of GroupM instances, with the associated users included as nested objects
   const userGroups = await GroupM.findAll({
     include: [
       {
@@ -70,6 +71,7 @@ const searchedMembers = async (req, res) => {
     const { input } = req.query;
     const members = await Users.findAll({
       where: {
+        // ! find users where either the email or phone field matches the input value
         [Op.or]: [
           { email: { [Op.like]: `%${input}%` } },
           { phone: { [Op.like]: `%${input}%` } },

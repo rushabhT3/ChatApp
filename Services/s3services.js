@@ -11,6 +11,7 @@ async function uploadToS3(data, filename) {
     // ? AWS related settings in the following link
     // https://youtu.be/ihZ6aHiOIWQ?list=PL4dunL3FOEk0XNSrauPcapBXdyojKlM9x&t=771
 
+    // ? AWS.S3 class का एक नया instance create होता है,
     let s3bucket = new AWS.S3({
       accessKeyId: IAM_USER_KEY,
       secretAccessKey: IAM_USER_SECRET,

@@ -2,22 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const { createServer } = require("http");
-const { Server } = require("socket.io");
-const multer = require("multer");
 
+// ! app instance बनाया जाता है, और createServer function को call करके app instance को pass करते हुए एक नया httpServer instance बनाया जाता है।
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-  },
-  /* options */
-});
 
 const dotenv = require("dotenv");
 dotenv.config();
 
 const entryRoutes = require("./routes/router");
+const setupSocket = require("./socket");
 
 const sequelize = require("./util/database");
 const Users = require("./models/users");
@@ -49,26 +43,7 @@ Messages.belongsTo(Users);
 Groups.hasMany(Messages);
 Messages.belongsTo(Groups);
 
-/* 
-! This sets up an event listener for the "connection" event.
-! When a client connects to the server, the callback function is called 
-! with a socket object representing the connection.
-*/
-io.on("connection", (socket) => {
-  console.log("BE: io.on connection");
-
-  socket.on("sendMessage", (message) => {
-    io.emit("messageReceived");
-  });
-
-  socket.on("createGroup", (group) => {
-    io.emit("groupUpdated");
-  });
-
-  socket.on("memberAdded", () => {
-    io.emit("groupUpdated");
-  });
-});
+setupSocket(httpServer);
 
 const port = process.env.PORT || 3000;
 sequelize

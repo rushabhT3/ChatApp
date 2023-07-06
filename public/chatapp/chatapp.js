@@ -1,5 +1,6 @@
 const API_URL = "http://localhost:3000";
 
+// ! `io` function को call करके एक socket connection बनाता है
 const socket = io(API_URL);
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -35,11 +36,9 @@ const fileInput = document.getElementById("file-input");
 fileInput.addEventListener("change", () => {
   if (fileInput.files.length > 0) {
     const fileName = fileInput.files[0].name;
-    // update the page to show the file name
-    // or show an alert that a file has been attached
     alert(`File attached: ${fileName}`);
   } else {
-    // update the page to show that no file is attached
+    alert(`No File attached`);
   }
 });
 
@@ -71,10 +70,8 @@ async function sent(e) {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(response.data);
-    socket.emit("sendMessage", () => {
-      console.log("FE: sent is getting emitted");
-    });
+    // console.log(response.data);
+    socket.emit("sendMessage");
     messageInput.value = "";
     fileInput.value = "";
   } catch (error) {
