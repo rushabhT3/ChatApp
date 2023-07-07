@@ -154,20 +154,43 @@ const deleteMember = async (req, res) => {
 const makeAdmin = async (req, res) => {
   try {
     const { memberId, groupId } = req.body;
+    const loginId = req.headers.loginid;
+    console.log(memberId, loginId);
+
+    if (memberId == loginId) {
+      return res.status(400).json({ message: "Cannot make self an admin" });
+    }
+
+    const admin = await UserGroupM.findOne({
+      where: {
+        UserId: loginId,
+        GroupGroupId: groupId,
+        isAdmin: true,
+      },
+    });
+
+    if (!admin) {
+      return res.status(403).json({ message: "You are not an admin" });
+    }
+
     const member = await UserGroupM.findOne({
       where: {
         UserId: memberId,
         GroupGroupId: groupId,
       },
     });
+
     if (!member) {
       return res.status(404).json({ message: "Member not found" });
     }
-    if (member.isAdmin === true) {
+
+    if (member.isAdmin) {
       return res.status(400).json({ message: "Member is already an admin" });
     }
+
     member.isAdmin = true;
     await member.save();
+
     res.status(200).json({ message: "Member successfully made an admin" });
   } catch (error) {
     res.status(500).json({ message: "An error occurred" });

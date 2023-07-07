@@ -202,11 +202,20 @@ function updateMemberList(members, groupName) {
     });
     makeAdminButton.addEventListener("click", async () => {
       try {
+        const token = localStorage.getItem("token");
+        const decodedToken = parseJwt(token);
+        const userId = decodedToken.jwtId;
+        console.log({ userId, adminme: member.id });
         const data = {
           memberId: member.id,
           groupId: localStorage.getItem("groupId"),
         };
-        const response = await axios.post(`${API_URL}/makeAdmin/`, data);
+        console.log({ data, userId });
+        const response = await axios.post(`${API_URL}/makeAdmin/`, data, {
+          headers: {
+            loginId: userId,
+          },
+        });
         if (response.status === 200) {
           alert(response.data.message);
         } else {
@@ -233,6 +242,7 @@ function updateMemberList(members, groupName) {
         const token = localStorage.getItem("token");
         const decodedToken = parseJwt(token);
         const userId = decodedToken.jwtId;
+        console.log({ userId, here: member.id });
         await axios.delete(
           `${API_URL}/deleteMember/${member.id}&${localStorage.getItem(
             "groupId"
