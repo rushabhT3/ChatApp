@@ -5,9 +5,15 @@ A modern, feature-rich chat application built with Node.js, Express, and Socket.
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="https://github.com/rushabhT3/ChatApp/blob/main/screenshots/signup.png?raw=true" height="280" alt="Sign Up Page" style="margin: 8px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-  <img src="https://github.com/rushabhT3/ChatApp/blob/main/screenshots/login.png?raw=true" height="280" alt="Login Page" style="margin: 8px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-  <img src="https://github.com/rushabhT3/ChatApp/blob/main/screenshots/chat.png?raw=true" height="280" alt="Chat Interface" style="margin: 8px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+### Chat Interface
+<img src="https://github.com/user-attachments/assets/c7b973cf-0d07-4fc6-8d27-02a1aae51171" height="340" alt="Chat Interface 1" style="margin: 10px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+<img src="https://github.com/user-attachments/assets/5543552f-dee5-4616-96f1-e4be9def6c3f" height="340" alt="Chat Interface 2" style="margin: 10px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+
+### Authentication Pages
+<img src="https://github.com/user-attachments/assets/5d47af32-a305-438d-a9d3-8fe068c3e0f7" height="340" alt="Login Page" style="margin: 10px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+<img src="https://github.com/user-attachments/assets/7706b1e9-ec69-43cf-b06e-9c12dd177f89" height="340" alt="Sign Up Page" style="margin: 10px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+
 </div>
 
 ## ✨ Features
@@ -82,4 +88,4 @@ JWT_SECRET=your_jwt_secret
 
 ---
 
-**Built by Rushabh** | MIT License
+**Built with 💌 by Rushabh**
