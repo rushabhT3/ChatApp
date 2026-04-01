@@ -5,52 +5,68 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>ChatG</title>
+    <title>ChatG - Real-time Messaging</title>
+    <link rel="stylesheet" href="styles/chatapp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <div class="container">
         <div class="header">
             <img src="logo.png" alt="ChatG Logo">
-            <h1>Frendz</h1>
+            <h1>ChatG</h1>
             <p class="tagline">staying in touch :)</p>
         </div>
 
-        <div class="container-left" style="float: left; width: 20%; min-height: 50vh;
-        max-height: 80vh;">
-            <p>Members:</p>
-        </div>
-        <div class="container-right" style="float: right; width: 20%; min-height: 50vh; max-height: 80vh;">
-            <p class="group-label">Groups:</p>
-            <button class="make-group-button" onclick="makeGroup()">+</button>
-            <ul id="groupList" style="list-style: none;"></ul>
-            <form id="groupForm" class="group-form" style="display: none;">
-                <input type="text" name="groupName" />
-                <button type="submit">Create Group</button>
-            </form>
-        </div>
-        <div id="message-area">
-            <div class="left">
-                Left:
+        <div class="main-content">
+            <div class="container-left">
+                <p><i class="fas fa-users"></i> Members</p>
+                <div id="membersList"></div>
             </div>
-            <div class="right">
-                Right:
+
+            <div id="message-area">
+                <div class="message-container" id="messageContainer">
+                    <div class="message other">
+                        <div class="message-author">ChatG</div>
+                        <div class="message-text">Welcome to ChatG! Start chatting with your friends.</div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <form action="#" method="post" onsubmit="sent(event)" enctype="multipart/form-data">
+                        <input type="text" id="message-input" name="input" placeholder="Type your message..."
+                            autocomplete="off">
+                        <label for="file-input">
+                            <i class="fas fa-paperclip attachment-icon"></i>
+                        </label>
+                        <input type="file" id="file-input" multiple name="attachment" style="display: none;">
+                        <button id="send-button" type="submit">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="container-right">
+                <p class="group-label"><i class="fas fa-layer-group"></i> Groups</p>
+                <button class="make-group-button" onclick="makeGroup()" title="Create New Group">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <form id="groupForm" class="group-form" style="display: none;">
+                    <input type="text" name="groupName" placeholder="Enter group name" />
+                    <button type="submit">Create Group</button>
+                </form>
+                <ul id="groupList" class="group-list"></ul>
             </div>
         </div>
-        <div class="input-container">
-            <form action="#" method="post" onsubmit="sent(event)" enctype="multipart/form-data">
-                <input type="text" id="message-input" name="input" placeholder="Type your message..." width="100%">
 
-                <label for="file-input"> <i class="fa fa-paperclip attachment-icon"></i> </label>
-                <input type="file" id="file-input" multiple name="attachment" style="display: none;">
-                <button id="send-button" type="submit">Send</button>
-
-            </form>
+        <div>
+            <button id="delete-button" onclick="exitGroup()">
+                <i class="fas fa-sign-out-alt"></i> Exit Group Messages
+            </button>
         </div>
     </div>
-    <div><button id="delete-button">Exit Group Messages!</button></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
     <script src="chatapp.js"></script>

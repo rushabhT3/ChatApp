@@ -5,103 +5,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/" rel="stylesheet">
-    <title>Login!</title>
-    <style>
-        body {
-            background-image: url('https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/rm422-047-kq92wx9y.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=b4691601fc97c7e239f0462f567837b6');
-            background-size: cover;
-            background-repeat: no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .card {
-            background-color: #90ee90;
-            padding: 20px;
-            width: 50%;
-            max-width: 400px;
-            border-radius: 8px;
-        }
-
-        .card h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-family: 'Lobster', cursive;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-family: 'Lobster', cursive;
-        }
-
-        input[type=email],
-        input[type=password] {
-            padding: 12px 20px;
-            margin-bottom: 12px;
-            border-radius: 4px;
-            border: none;
-        }
-
-        input[type=submit] {
-            background-color: #006400;
-            color: white;
-            padding: 14px 20px;
-            margin-top: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Lobster', cursive;
-        }
-
-        input[type=submit]:hover {
-            background-color: #228B22;
-        }
-
-        .card a {
-            text-align: center;
-            margin-top: 12px;
-            color: #006400;
-            text-decoration: none;
-            font-family: 'Lobster', cursive;
-        }
-
-        .card a:hover {
-            color: #176117;
-        }
-
-        /* Responsive Styles */
-        @media screen and (max-width: 768px) {
-            .card {
-                width: 90%;
-                max-width: none;
-            }
-        }
-    </style>
+    <title>Login - ChatG</title>
+    <link rel="stylesheet" href="styles/login.css">
 </head>
 
 <body>
     <div class="card">
-        <h2>Login</h2>
+        <h2>Welcome Back</h2>
         <form id='form-id' onsubmit="formSubmit(event)">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            <input type="submit" value="Submit">
+            <input type="submit" value="Sign In">
         </form>
-        <div style="text-align: center;">
-            <a href="../signup/signup.html">New User? Sign Up!</a>
-        </div>
+        <a href="../signup/signup.html">New to ChatG? Create Account</a>
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -110,8 +28,17 @@
     async function formSubmit(e) {
         e.preventDefault();
 
+        const submitBtn = e.target.querySelector('input[type="submit"]');
+        const originalValue = submitBtn.value;
+        submitBtn.value = 'Signing In...';
+        submitBtn.disabled = true;
+
         const email = event.target.email.value;
         const password = event.target.password.value;
+
+        // Remove any existing messages
+        const existingMessages = document.querySelectorAll('.error-message, .success-message');
+        existingMessages.forEach(msg => msg.remove());
 
         if (email && password) {
             const userData = { email, password };
@@ -124,17 +51,37 @@
                 if (response.status === 200) {
                     const token = response.data.token;
                     localStorage.setItem('token', token);
-                    window.location.href = "../chatapp/chatapp.html";
+                    showMessage('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = "../chatapp/chatapp.html";
+                    }, 1000);
                 } else {
-                    throw new Error("failed to login");
+                    throw new Error("Failed to login");
                 }
             } catch (error) {
                 console.log(JSON.stringify(error));
-                document.body.innerHTML += `<div style="color:red">${error.message}</div>`;
+                if (error.response && error.response.status === 401) {
+                    showMessage('Invalid email or password. Please try again.', 'error');
+                } else if (error.response && error.response.status === 404) {
+                    showMessage('User not found. Please sign up first.', 'error');
+                } else {
+                    showMessage('Login failed. Please try again.', 'error');
+                }
             }
-        };
+        } else {
+            showMessage('Please fill in all the form fields', 'error');
+        }
+
+        submitBtn.value = originalValue;
+        submitBtn.disabled = false;
+    }
+
+    function showMessage(message, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+        messageDiv.textContent = message;
+        document.querySelector('.card').appendChild(messageDiv);
     }
 </script>
-
 
 </html>

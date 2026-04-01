@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-green: #09543d;
+    --secondary-pink: #f09bd1;
+    --accent-pink: #ffa9e9;
+    --bg-cream: #fffdf7;
+    --text-brown: #461e10;
+    --white: #ffffff;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-cream);
+    color: var(--text-brown);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.card {
+    background: var(--white);
+    padding: 60px 50px;
+    border-radius: 50px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(70, 30, 16, 0.05);
+    text-align: center;
+    border: 1px solid rgba(70, 30, 16, 0.05);
+}
+
+.card h2 {
+    font-family: 'Anton', sans-serif;
+    font-size: 3rem;
+    text-transform: uppercase;
+    color: var(--primary-green);
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left;
+}
+
+label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-left: 10px;
+    color: var(--text-brown);
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 18px 25px;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-color: #fceef8; /* Soft pinkish/beige tint */
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: var(--text-brown);
+    transition: var(--transition);
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: var(--secondary-pink);
+    background-color: var(--white);
+}
+
+input[type="submit"] {
+    margin-top: 10px;
+    background-color: var(--primary-green);
+    color: var(--white);
+    padding: 18px;
+    border: none;
+    border-radius: 100px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+input[type="submit"]:hover {
+    background-color: var(--text-brown);
+    transform: scale(1.02);
+}
+
+input[type="submit"]:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.card a {
+    display: inline-block;
+    margin-top: 30px;
+    color: var(--text-brown);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    border-radius: 100px;
+    background-color: var(--secondary-pink);
+    transition: var(--transition);
+}
+
+.card a:hover {
+    background-color: var(--accent-pink);
+    transform: translateY(-2px);
+}
+
+/* Messages */
+.error-message, .success-message {
+    padding: 15px 20px;
+    border-radius: 20px;
+    margin-top: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.error-message {
+    background-color: #ffe5e5;
+    color: #d63031;
+    border: 1px solid #fab1a0;
+}
+
+.success-message {
+    background-color: #e3f9e5;
+    color: #27ae60;
+    border: 1px solid #ace1af;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .card {
+        padding: 40px 30px;
+        border-radius: 40px;
+    }
+    
+    .card h2 {
+        font-size: 2.5rem;
+    }
+}
